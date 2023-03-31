@@ -8,17 +8,20 @@ logging.basicConfig(filename='shaztest.log', encoding='utf-8', level=logging.DEB
 
 async def main(loop):
     
-    audio_source = 'https://stream-relay-geo.ntslive.net/stream'
-    # audio_source = 'https://fm.chunt.org/stream'
+    # audio_source = 'https://stream-relay-geo.ntslive.net/stream'
+    audio_source = 'https://fm.chunt.org/stream'
     # audio_source = "https://doyouworld.out.airtime.pro/doyouworld_a"
     # audio_source = "https://kioskradiobxl.out.airtime.pro/kioskradiobxl_a"
     
-    api = rapidapi(loop, shazam_api_key)
-    shazam = Shazam()
+    api_rapid = rapidapi(loop, shazam_api_key)
+    api_shazamio = Shazam()
     while True:
         try:
-            out_shazamio = await shazam.recognize_song(audio_source)
-            out_rapidapi = await api._get(audio_source)
+            payload_from_rapid = await api_rapid._get(audio_source)
+            #out_shazamio = await api_shazamio.recognize_song(audio_source)
+            out_rapidapi = await api_rapid._post(payload_from_rapid)
+            #out_rapidapi = await api_rapid._get(audio_source)
+            out_shazamio = await api_shazamio.recognize_song(payload_from_rapid)
             
             print('rapidapi')
             print(out_rapidapi)

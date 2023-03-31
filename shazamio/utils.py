@@ -86,6 +86,10 @@ async def get_song(data: SongT) -> Union[AudioSegment]:
 
     if isinstance(data, AudioSegment):
         return data
+    if isinstance(data, bytes):
+        return data
+    else:
+        return AudioSegment.from_file(BytesIO(data))
 
 
 class QueryBuilder:

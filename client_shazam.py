@@ -50,20 +50,34 @@ class ShazamApi:
                         recording.write(chunk)
                         # some stations send lots of buffered audio on connect which might already be too much for shazam
                         # so we break at 250 chunks. 4s of 256kbit stream are about 213 chunks
-                        #if chunk_count > 250:
+                        # if chunk_count > 250:
                         #    break
 
                     recording.seek(0)
 
-                    sound = AudioSegment.from_file(recording)
-                    sound = sound.set_channels(1)
-                    sound = sound.set_sample_width(2)
-                    sound = sound.set_frame_rate(44100)
+                    
             except aiohttp.client_exceptions.ClientConnectorError as e:
-                print("there was a ClientConnectorError")
+                print("ClientConnectorError")
                 print(e)
-            if sound:
-                payload = base64.b64encode(sound.raw_data)
+            if recording:
+                sound = AudioSegment.from_file(recording)
+                return sound
+            else:
+                out = ""
+                print("no audio")
+                return out
+
+    async def _post(self, sound, session=None):
+        if session == None:
+            session = aiohttp.ClientSession()
+        
+        sound = sound.set_channels(1)
+        sound = sound.set_sample_width(2)
+        sound = sound.set_frame_rate(44100)
+        payload = base64.b64encode(sound.raw_data)
+        async with session as session:
+            try:
+                
                 async with session.post(
                     "https://shazam.p.rapidapi.com/songs/v2/detect",
                     data=payload,
@@ -71,13 +85,14 @@ class ShazamApi:
                 ) as response:
                     try:
                         out = await response.json()
+                        return out
                     except Exception as e:
                         print(e)
-            else:
-                out = ""
-                print("no audio")
-            return out
-
+            except aiohttp.client_exceptions.ClientConnectorError as e:
+                print("ClientConnectorError")
+                print(e)
+                    
+            
 
 async def loopy(loop):
     n = 1
@@ -89,13 +104,14 @@ async def loopy(loop):
 
 async def main(loop):
 
-    # audio_source = 'https://stream-relay-geo.ntslive.net/stream'
+    audio_source = 'https://stream-relay-geo.ntslive.net/stream'
     # audio_source = 'https://fm.chunt.org/stream'
-    audio_source = "https://doyouworld.out.airtime.pro/doyouworld_a"
+    # audio_source = "https://doyouworld.out.airtime.pro/doyouworld_a"
     # audio_source = "https://kioskradiobxl.out.airtime.pro/kioskradiobxl_a"
     asyncio.ensure_future(loopy(loop))
     api = ShazamApi(loop, shazam_api_key)
-    out = await api._get(audio_source)
+    payload = await api._get(audio_source)
+    out = await api._post(payload)
     print(out)
 
 

@@ -57,7 +57,7 @@ async def main(loop):
                 with open("idlog_shazamio_nomatches.txt", 'a') as f:
                     
                     if out_rapidapi['matches']:
-                        f.write(str(printcurrenttime())  + " " +  out_rapidapi['track']['title'] + " " + out_rapidapi['track']['subtitle'] + " vs "  + "shazamapi no match" + '\n')
+                        f.write(str(printcurrenttime())  + " " +  out_rapidapi['track']['title'] + " " + out_rapidapi['track']['subtitle'] + " vs "  + "shazamio no match" + '\n')
                     elif out_shazamio['matches']:
                         f.write(str(printcurrenttime())  + " " +  "rapidapi no match" + " vs "  + out_shazamio['track']['title'] + " " + out_shazamio['track']['subtitle'] + '\n')
                     else:

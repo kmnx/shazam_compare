@@ -17,8 +17,9 @@ async def main(loop):
     shazam = Shazam()
     while True:
         try:
-            out_rapidapi = await api._get(audio_source)
             out_shazamio = await shazam.recognize_song(audio_source)
+            out_rapidapi = await api._get(audio_source)
+            
             print('rapidapi')
             print(out_rapidapi)
             print('shazamio')

@@ -23,10 +23,10 @@ async def main(loop):
             #out_rapidapi = await api_rapid._get(audio_source)
             out_shazamio = await api_shazamio.recognize_song(payload_from_rapid)
             
-            print('rapidapi')
-            print(out_rapidapi)
-            print('shazamio')
-            print(out_shazamio)
+            #print('rapidapi')
+            #print(out_rapidapi)
+            #print('shazamio')
+            #print(out_shazamio)
 
             print('short version')
             if out_shazamio['matches']:
